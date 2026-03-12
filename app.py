@@ -8,8 +8,7 @@ import plotly.express as px
 st.set_page_config(page_title="BEL & ALM Analysis", layout="wide")
 st.title("📊 BEL and ALM Analysis")
 st.markdown(
-    "***Note:* The BEL amount for December 2025 is currently unavailable, "
-    "as it has not yet been provided by the insurance company.**"
+    "***Note:* From January 2026, the liabilities referred to 4Q '25 have been applied**"
 )
 
 # =====================================================
@@ -252,6 +251,7 @@ if not df_alm_f.empty:
 
 if cols_selected and not df_alm_f.empty:
     plot_interactive(df_alm_f[cols_selected], "Duration Trend")
+
 
 
 
