@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 
 # =====================================================
 # STREAMLIT CONFIG
@@ -42,7 +43,7 @@ def load_bel_tables():
     df_raw = pd.read_excel(
         file_name,
         sheet_name="Analisi BEL Aggregate",
-        #usecols="B:O",
+        #usecols="B:N",
         header=None
     )
 
@@ -85,10 +86,6 @@ table_1, table_2, table_3 = load_bel_tables()
 # =====================================================
 # REMOVE COLUMNS WITH NaN INDEX
 # =====================================================
-def drop_nan_index_cols(df):
-    return df.loc[:, df.index.notna()] if df.index.dtype != object else df
-
-# Se l’indice è numerico o datetime, non servirebbe; qui eliminiamo solo colonne con NaN nell’indice
 table_1 = table_1.loc[:, table_1.columns.notna()]
 table_2 = table_2.loc[:, table_2.columns.notna()]
 table_3 = table_3.loc[:, table_3.columns.notna()]
@@ -96,7 +93,7 @@ table_3 = table_3.loc[:, table_3.columns.notna()]
 df_alm = load_alm()
 
 # =====================================================
-# PLOT FUNCTION
+# PLOT FUNCTION (standard)
 # =====================================================
 def plot_interactive(df, title):
     df_plot = df.copy()
@@ -114,6 +111,49 @@ def plot_interactive(df, title):
         markers=True,
         title=title
     )
+    fig.update_layout(hovermode="x unified")
+    st.plotly_chart(fig, use_container_width=True)
+
+# =====================================================
+# PLOT FUNCTION WITH AVERAGE (ALM only)
+# =====================================================
+def plot_interactive_with_avg(df, title):
+    df_plot = df.copy()
+    df_plot["Periods"] = df_plot.index
+    df_long = df_plot.melt(
+        id_vars="Periods",
+        var_name="Metric",
+        value_name="Values"
+    )
+
+    fig = px.line(
+        df_long,
+        x="Periods",
+        y="Values",
+        color="Metric",
+        markers=True,
+        title=title
+    )
+
+    # Add dashed average line per metric, matching its color
+    colors = px.colors.qualitative.Plotly
+    metrics = df_long["Metric"].unique()
+
+    for i, metric in enumerate(metrics):
+        avg_val = df_long[df_long["Metric"] == metric]["Values"].mean()
+        color = colors[i % len(colors)]
+        fig.add_hline(
+            y=avg_val,
+            line_dash="dash",
+            line_color=color,
+            line_width=1.2,
+            opacity=0.6,
+            annotation_text=f"Avg {metric}: {avg_val:.2f}",
+            annotation_position="top right",
+            annotation_font_size=11,
+            annotation_font_color=color,
+        )
+
     fig.update_layout(hovermode="x unified")
     st.plotly_chart(fig, use_container_width=True)
 
@@ -232,7 +272,6 @@ df_alm_f = df_alm.loc[
 ]
 
 if not df_alm_f.empty:
-    # BUTTON BLOCK BEFORE THE GRAPH
     row_ref = df_alm.loc[alm_end]
 
     duration_liabilities = row_ref["Duration Liabilities"]
@@ -250,15 +289,4 @@ if not df_alm_f.empty:
         )
 
 if cols_selected and not df_alm_f.empty:
-    plot_interactive(df_alm_f[cols_selected], "Duration Trend")
-
-
-
-
-
-
-
-
-
-
-
+    plot_interactive_with_avg(df_alm_f[cols_selected], "Duration Trend")
