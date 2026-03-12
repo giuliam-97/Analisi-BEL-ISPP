@@ -42,7 +42,7 @@ def load_bel_tables():
     df_raw = pd.read_excel(
         file_name,
         sheet_name="Analisi BEL Aggregate",
-        #usecols="B:N",
+        usecols="B:O",
         header=None
     )
 
@@ -74,7 +74,7 @@ def load_alm():
     df = pd.read_excel(
         file_name,
         sheet_name="Analisi ALM",
-        usecols="A:E"
+        usecols="B:E"
     )
     df = df.dropna(how="all")
     df = df.set_index(df.columns[0])
@@ -88,7 +88,6 @@ table_1, table_2, table_3 = load_bel_tables()
 def drop_nan_index_cols(df):
     return df.loc[:, df.index.notna()] if df.index.dtype != object else df
 
-# Se l’indice è numerico o datetime, non servirebbe; qui eliminiamo solo colonne con NaN nell’indice
 table_1 = table_1.loc[:, table_1.columns.notna()]
 table_2 = table_2.loc[:, table_2.columns.notna()]
 table_3 = table_3.loc[:, table_3.columns.notna()]
@@ -232,7 +231,6 @@ df_alm_f = df_alm.loc[
 ]
 
 if not df_alm_f.empty:
-    # BUTTON BLOCK BEFORE THE GRAPH
     row_ref = df_alm.loc[alm_end]
 
     duration_liabilities = row_ref["Duration Liabilities"]
@@ -251,12 +249,3 @@ if not df_alm_f.empty:
 
 if cols_selected and not df_alm_f.empty:
     plot_interactive(df_alm_f[cols_selected], "Duration Trend")
-
-
-
-
-
-
-
-
-
