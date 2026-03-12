@@ -42,7 +42,7 @@ def load_bel_tables():
     df_raw = pd.read_excel(
         file_name,
         sheet_name="Analisi BEL Aggregate",
-        #usecols="B:N",
+        #usecols="B:O",
         header=None
     )
 
@@ -251,6 +251,7 @@ if not df_alm_f.empty:
 
 if cols_selected and not df_alm_f.empty:
     plot_interactive(df_alm_f[cols_selected], "Duration Trend")
+
 
 
 
