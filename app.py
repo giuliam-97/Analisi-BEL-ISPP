@@ -9,7 +9,7 @@ import plotly.graph_objects as go
 st.set_page_config(page_title="BEL & ALM Analysis", layout="wide")
 st.title("📊 BEL and ALM Analysis")
 st.markdown(
-    "***Note:* From January 2026, the liabilities referred to 4Q '25 have been applied (we haven't received the 1Q '26 yet).**"
+    "***Note:* The liabilities are updated referring on the 1Q 2026.**"
 )
 
 # =====================================================
