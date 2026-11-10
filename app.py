@@ -43,7 +43,7 @@ def load_bel_tables():
     df_raw = pd.read_excel(
         file_name,
         sheet_name="Analisi BEL Aggregate",
-        #usecols="B:N",
+        #usecols="B:W",
         header=None
     )
 
